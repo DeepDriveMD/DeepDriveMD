@@ -1,8 +1,5 @@
-# workflow-2
+# DeepDriveMD
 
-## with molecules for pytorch resnet
-
-[README](../../wf2/molecules/workflow-2/README_molecules.md)
 
 ## Availability
 
@@ -17,26 +14,15 @@
 
 *plpro is waiting for new implementation of CVAE
 
-## Instruction and Branch
-
-Use a branch to isolate a system without affecting others in the workflow-2. Each branch has separate README and a python script to run.
-
-| System | HPC | Document | Branch | Run | 
-| ------ | --- | ------ | ------ | --- |
-| adrp   | longhorn | [README](../../wf2/adrp/workflow-2/readme_longhorn.md) | [wf2/adrp branch](../../wf2/adrp/workflow-2) | `python longhorn_adrp.py` |
-| adrp   | lassen | [README](../../wf2/adrp/workflow-2/readme_lassen.md) | [wf2/adrp branch](../../wf2/adrp/workflow-2) | `python lassen_adrp.py` |
-| adrp   | summit | [README](../../wf2/adrp/workflow-2/README.md) | [wf2/adrp branch](../../wf2/adrp/workflow-2) | `python summit_md.py` |
-| plpro   | summit | [README](../../wf2/plpro/workflow-2/README.md) | [wf2/plpro branch](../../wf2/plpro/workflow-2) | `python summit_md.py` |
-
 ## Installation
 
-### Tensorflow/Keras and others (Summit)
+### Tensorflow/Keras on ORNL Summit
 
 ```
 (python3)
 . "/sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh"
-conda create -n workflow-2 python=3.6 -y
-conda activate workflow-2
+conda create -n deepdrivemd python=3.6 -y
+conda activate deepdrivemd
 conda install tensorflow-gpu keras scikit-learn swig numpy cython scipy matplotlib pytables h5py -y
 pip install MDAnalysis MDAnalysisTests parmed
 pip install radical.entk radical.pilot radical.saga radical.utils --upgrade
@@ -57,20 +43,24 @@ conda install -c omnia-dev/label/cuda92 openmm
 
 ### Latest stack info
 
-The following versions are verified on Summit for sucessful run of workflow-2
+The following versions are verified on Summit
 
 ```
 $ radical-stack
 
-  ...
-  
-  radical.entk         : 1.0.2
-  radical.pilot        : 1.2.1
-  radical.saga         : 1.2.0
-  radical.utils        : 1.2.2
+  python               : 3.6.10
+  pythonpath           : /sw/summit/xalt/1.2.1/site:/sw/summit/xalt/1.2.1/libexec
+  virtualenv           : deepdrivemd
+
+  radical.entk         : 1.5.8
+  radical.gtod         : 1.5.0
+  radical.pilot        : 1.5.8
+  radical.saga         : 1.5.8
+  radical.utils        : 1.5.8
+
 ```
 
-### Shell variables
+### Environment variables
 
 #### RMQ (Mandatory)
 
@@ -89,33 +79,14 @@ export RADICAL_ENTK_PROFILE=TRUE
 
 ## Run
 
-It will require writable space before running the main script. Output files are stored in sub-directories. Locate the wf-2 repo at $MEMBERWORK/{{PROJECTID}}/ and run the script on Summit. $HOME becomes readable only system when a job is running.
+It will require writable space before running the main script. Output files are stored in sub-directories. Locate the main repo at GPFS i.e., $MEMBERWORK/{{PROJECTID}}/ and run the script on Summit. $HOME becomes readable only system when a job is running.
 
 ```
-$ python summit_md.py
+$ python molecules.py
 ```
-
 
 ## Prerequisites
 
-Configurations in the script (`summit_md.py`)
-- `md_counts`: a number of md simulations
-- `ml_counts`: a number of CVAE
-- `conda_path`: a location of the conda environment for openMM e.g. '$HOME/.conda/envs/openmm'
-- `MAX_STAGE`: a number of iterations to stop
-- `RETRAIN_FREQ`: an interval to trigger CVAE stage
-- `LEN_initial`: a timesteps of the first MD run (nanosecond)
-- `LEN_iter`: a timespan of the rest simulation trajectory (nanosecond)
-- `generate_MD_stage(num_MD=N)`: a method with a N number of simulations
-- `generate_ML_stage(num_ML=M)`: a method with a M number of training
-
-Resource configurations in the script (`summit_md.py`)
-- `res_dict` would have:
-   - 'resource': HPC resource e.g. 'ornl.summit'
-   - 'queue':
-      - 'batch' for upto 2 hours TTX at `ornl.summit`
-      - 'killable' for upto 1 day(24hours) TTX at `ornl.summit`
-   - 'gpus': a number of GPU cores equal to N simulations (1 MD/ML run: 1GPU)
 
 Bash environment variable for EnTK
 - RMQ_HOSTNAME/RMQ_PORT (mandatory)
